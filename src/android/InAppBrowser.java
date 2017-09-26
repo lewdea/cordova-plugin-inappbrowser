@@ -109,6 +109,7 @@ public class InAppBrowser extends CordovaPlugin {
     private ValueCallback<Uri[]> mUploadCallbackLollipop;
     private final static int FILECHOOSER_REQUESTCODE = 1;
     private final static int FILECHOOSER_REQUESTCODE_LOLLIPOP = 2;
+    private HashMap<String, Boolean> addtionalHeaders;
 
     /**
      * Executes the request and returns PluginResult.
@@ -128,6 +129,7 @@ public class InAppBrowser extends CordovaPlugin {
             }
             final String target = t;
             final HashMap<String, Boolean> features = parseFeature(args.optString(2));
+            addtionalHeaders = parseHeader(args.optString(3));
 
             LOG.d(LOG_TAG, "target = " + target);
 
@@ -361,6 +363,30 @@ public class InAppBrowser extends CordovaPlugin {
     }
 
     /**
+     * Put the list of headers into a map
+     *
+     * @param headerString
+     * @return
+     */
+    private Map<String, String> parseHeader(String headerString) {
+        HashMap<String, Boolean> map = new HashMap<String, String>();
+        if (!headerString.equals(NULL)) {
+            StringTokenizer headers = new StringTokenizer(headerString, ",");
+            StringTokenizer option;
+            while(headers.hasMoreElements()) {
+                option = new StringTokenizer(headers.nextToken(), ":");
+                if (option.hasMoreElements()) {
+                    String key = option.nextToken();
+                    String value = option.nextToken();
+                    map.put(key, value);
+                }
+            }
+        }
+        return map;
+
+    }
+
+    /**
      * Put the list of features into a hash map
      *
      * @param optString
@@ -496,9 +522,9 @@ public class InAppBrowser extends CordovaPlugin {
         imm.hideSoftInputFromWindow(edittext.getWindowToken(), 0);
 
         if (!url.startsWith("http") && !url.startsWith("file:")) {
-            this.inAppWebView.loadUrl("http://" + url);
+            this.inAppWebView.loadUrl("http://" + url, addtionalHeaders);
         } else {
-            this.inAppWebView.loadUrl(url);
+            this.inAppWebView.loadUrl(url, addtionalHeaders);
         }
         this.inAppWebView.requestFocus();
     }
@@ -809,7 +835,7 @@ public class InAppBrowser extends CordovaPlugin {
                     CookieManager.getInstance().removeSessionCookie();
                 }
 
-                inAppWebView.loadUrl(url);
+                inAppWebView.loadUrl(url, addtionalHeaders);
                 inAppWebView.setId(Integer.valueOf(6));
                 inAppWebView.getSettings().setLoadWithOverviewMode(true);
                 inAppWebView.getSettings().setUseWideViewPort(useWideViewPort);
