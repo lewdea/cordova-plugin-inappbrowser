@@ -27,6 +27,16 @@ description: Open an in-app browser window.
 
 # cordova-plugin-inappbrowser
 
+## Improvements for this specific repository
+Sometimes, when you want to improve your app performance for android, you probably will use crosswalk. When you want to load an url with inAppBrowser plugin with external authentication, you will find the plugin cannot load session for request header.
+So, now, the repo of inAppBrowser plugin gives you a interface to set the request headers with anything you want. Here is the example.
+```
+let headers = "Cookie: session=xxx...xxxxxx, Content-Type: xxxxx";
+let ref = cordova.InAppBrowser.open('http://apache.org', '_blank', 'location=yes', headers);
+```
+
+
+## Official docs for other functionalities goes here.
 You can show helpful articles, videos, and web resources inside of your app. Users can view web pages without leaving your app.
 
 > To get a few ideas, check out the [sample](#sample) at the bottom of this page or go straight to the [reference](#reference) content.
